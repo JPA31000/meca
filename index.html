@@ -43,6 +43,10 @@
                 <p>Réaction Appui A (gauche) : <strong id="reactionA">...</strong> kN</p>
                 <p>Réaction Appui B (droite) : <strong id="reactionB">...</strong> kN</p>
             </div>
+            <h3>Diagramme de l'effort tranchant</h3>
+            <canvas id="shearCanvas" width="500" height="200"></canvas>
+            <h3>Diagramme du moment fléchissant</h3>
+            <canvas id="momentCanvas" width="500" height="200"></canvas>
         </div>
 
         <div id="Materiaux" class="tab-content">
@@ -132,6 +136,7 @@
 
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
