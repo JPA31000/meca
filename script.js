@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Constantes
     const LONGUEUR_POUTRE = 5; // mètres
     const RESISTANCE_ACIER_ADM = 235; // MPa
+    const SECTION_SCALE = 2; // pixels par centimètre pour la visualisation
 
     // --- FONCTION PRINCIPALE DE MISE À JOUR (CALCULS) ---
     function mettreAJourToutesLesValeurs() {
@@ -56,8 +57,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const h_cm = parseFloat(poutreHauteurInput.value);
         valeurLargeur.textContent = b_cm;
         valeurHauteur.textContent = h_cm;
-        sectionVisu.style.width = `${b_cm * 2}px`;
-        sectionVisu.style.height = `${h_cm * 1}px`;
+        sectionVisu.style.width = `${b_cm * SECTION_SCALE}px`;
+        sectionVisu.style.height = `${h_cm * SECTION_SCALE}px`;
+        sectionVisu.textContent = `${b_cm} cm x ${h_cm} cm`;
         const I_cm4 = (b_cm * Math.pow(h_cm, 3)) / 12;
         const M_max_kNm = (chargeTotale * Math.pow(LONGUEUR_POUTRE, 2)) / 8;
         const M_max_Nmm = M_max_kNm * 1e6;
