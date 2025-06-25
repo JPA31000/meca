@@ -69,3 +69,43 @@
     list-style-type: '✔  ';
     padding-left: 20px;
 }
+/* Global styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.tab-nav {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #ddd;
+}
+
+.tab-link {
+    padding: 10px 15px;
+    background-color: #eaeaea;
+    border: none;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+}
+
+.tab-link:hover {
+    background-color: #d5e9ff;
+}
+
+.tab-link.active {
+    background-color: #005a9e;
+    color: #fff;
+    border-bottom-color: #005a9e;
+}
