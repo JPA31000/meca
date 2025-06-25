@@ -69,3 +69,16 @@
     list-style-type: '✔  ';
     padding-left: 20px;
 }
+
+/* Affichage visuel de la section rectangulaire */
+#sectionVisu {
+    margin: 15px auto;
+    border: 2px solid #005a9e;
+    background-color: #eef6ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #005a9e;
+    font-weight: bold;
+    transition: width 0.2s ease, height 0.2s ease;
+}
