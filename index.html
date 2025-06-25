@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concepts de Génie Civil Interactifs</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Simulation Interactive pour le Génie Civil</h1>
+        <p>Cet outil vous aide à comprendre visuellement les charges, l'équilibre, la résistance des matériaux et les poutres isostatiques.</p>
+
+        <div class="tab-nav">
+            <button class="tab-link active" onclick="openTab(event, 'Charges')">S4.1 - Charges</button>
+            <button class="tab-link" onclick="openTab(event, 'Equilibre')">S4.2 - Équilibre</button>
+            <button class="tab-link" onclick="openTab(event, 'Materiaux')">S4.3 - Mécanique</button>
+            <button class="tab-link" onclick="openTab(event, 'Isostatique')">S4.4 - Poutres Isostatiques</button>
+        </div>
+
+        <div id="Charges" class="tab-content" style="display:block;">
+            <h2>S4.1 – Identification et Évaluation des Charges</h2>
+            <p>Modifiez les charges pour voir leur impact. La combinaison de calcul est : <strong>1.35 G + 1.5 Q</strong>.</p>
+            <div class="controls">
+                <label for="chargeG">Charge Permanente (G) : <span id="valeurG">5</span> kN/m</label>
+                <input type="range" id="chargeG" min="1" max="20" value="5" class="slider">
+                <label for="chargeQ">Charge Variable (Q) : <span id="valeurQ">8</span> kN/m</label>
+                <input type="range" id="chargeQ" min="1" max="30" value="8" class="slider">
+            </div>
+            <div class="resultat">
+                <h3>Charge totale appliquée (ELU) :</h3>
+                <p id="calculCharge">1.35 * 5 + 1.5 * 8 = 18.75 kN/m</p>
+            </div>
+        </div>
+
+        <div id="Equilibre" class="tab-content">
+            <h2>S4.2 – Analyse de l’Équilibre d’un Système</h2>
+            <p>Une structure est en équilibre si la somme des forces et des moments est nulle. Pour notre poutre sur 2 appuis, les appuis génèrent des réactions pour contrer la charge appliquée.</p>
+            <canvas id="poutreCanvas" width="500" height="200"></canvas>
+            <div class="resultat">
+                <h3>Réactions aux appuis (calculées à partir de l'onglet S4.1) :</h3>
+                <p>Réaction Appui A (gauche) : <strong id="reactionA">...</strong> kN</p>
+                <p>Réaction Appui B (droite) : <strong id="reactionB">...</strong> kN</p>
+            </div>
+        </div>
+
+        <div id="Materiaux" class="tab-content">
+            <h2>S4.3 – Étude Mécanique et Choix Technique</h2>
+            <p>Le choix du matériau et des dimensions de la poutre est crucial pour qu'elle résiste aux efforts.</p>
+            <div class="controls">
+                <label for="poutreLargeur">Largeur de la poutre (b) : <span id="valeurLargeur">15</span> cm</label>
+                <input type="range" id="poutreLargeur" min="5" max="50" value="15" class="slider">
+                <label for="poutreHauteur">Hauteur de la poutre (h) : <span id="valeurHauteur">30</span> cm</label>
+                <input type="range" id="poutreHauteur" min="10" max="100" value="30" class="slider">
+            </div>
+            <div class="section-visu-container"><div id="sectionVisu"></div></div>
+            <div class="resultat">
+                <h3>Vérification de la Résistance (Contrainte de flexion)</h3>
+                <p>La contrainte dans le matériau ($\sigma$) doit être inférieure à sa résistance admissible ($\sigma_{adm}$).</p>
+                <p>Contrainte maximale : <strong id="valeurContrainte">...</strong> MPa (pour Acier S235, $\sigma_{adm}$ = 235 MPa)</p>
+                <div id="verdict" class="verdict-neutre">En attente des calculs...</div>
+            </div>
+        </div>
+        
+        <div id="Isostatique" class="tab-content">
+            <h2>S4.4 - Introduction aux Poutres Isostatiques</h2>
+            <p>Les poutres isostatiques sont des structures dont les réactions d'appui peuvent être entièrement déterminées par les 3 équations de la statique. Elles ne présentent pas de liaisons superflues.</p>
+            
+            <h3>Détermination de l'Isostaticité</h3>
+            <p>Une poutre est isostatique si son degré d'hyperstaticité $\Delta h$ est nul. Testez par vous-même !</p>
+            
+            <div class="controls interactive-section">
+                <h4>Calculateur d'Isostaticité</h4>
+                <p>Choisissez les appuis de votre poutre (pour une poutre simple, $n_p = 1$). La formule est : $\Delta h = R - 3$</p>
+                <div class="appui-selection">
+                    <div>
+                        <label for="appuiA">Appui de Gauche :</label>
+                        <select id="appuiA">
+                            <option value="1">Appui simple (1 réaction)</option>
+                            <option value="2" selected>Articulation (2 réactions)</option>
+                            <option value="3">Encastrement (3 réactions)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="appuiB">Appui de Droite :</label>
+                        <select id="appuiB">
+                            <option value="1" selected>Appui simple (1 réaction)</option>
+                            <option value="2">Articulation (2 réactions)</option>
+                            <option value="3">Encastrement (3 réactions)</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="resultatIsostatique" class="verdict-neutre">
+                    Calculez pour voir le résultat.
+                </div>
+            </div>
+
+            <h3>Classification des Poutres Isostatiques Courantes</h3>
+            <div class="poutre-types">
+                <div class="poutre-type">
+                    <img src="https://i.imgur.com/8Yv2Y4k.png" alt="Schéma poutre simple">
+                    <h4>Poutre simple</h4>
+                    <p>Deux appuis (un articulé, un simple). $R=3 \implies \Delta h = 0$.</p>
+                </div>
+                <div class="poutre-type">
+                    <img src="https://i.imgur.com/s6B3YJ4.png" alt="Schéma poutre console">
+                    <h4>Poutre console</h4>
+                    <p>Encastrée à une extrémité, libre à l'autre. $R=3 \implies \Delta h = 0$.</p>
+                </div>
+                <div class="poutre-type">
+                    <img src="https://i.imgur.com/aDm02d6.png" alt="Schéma poutre à porte-à-faux">
+                    <h4>Poutre à porte-à-faux</h4>
+                    <p>Appuis simples avec une extrémité en surplomb.</p>
+                </div>
+            </div>
+
+            <h3>Méthode des Sections et Hypothèses</h3>
+            <div class="theory-section">
+                <h4>La Méthode des Sections</h4>
+                <p>Pour trouver les efforts internes (effort tranchant V, moment fléchissant M), on pratique une "coupe" imaginaire dans la poutre et on applique les équations d'équilibre à la partie isolée. C'est la clé pour dessiner les diagrammes d'efforts et dimensionner la poutre.</p>
+
+                <h4>Hypothèses Simplificatrices</h4>
+                <ul>
+                    <li><strong>Hypothèse de Navier-Bernoulli :</strong> Une section droite avant déformation reste droite après. C'est l'hypothèse la plus importante.</li>
+                    <li><strong>Petites déformations :</strong> La poutre se déforme très peu par rapport à ses dimensions.</li>
+                    <li><strong>Matériau homogène, isotrope et élastique :</strong> Le matériau a les mêmes propriétés partout et se comporte comme un "élastique".</li>
+                    <li><strong>Fibre neutre :</strong> C'est un axe imaginaire au cœur de la poutre qui ne s'allonge ni se ne raccourcit. Tous les calculs de déformation s'y rapportent.</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
