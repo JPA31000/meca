@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const poutreCanvas = document.getElementById('poutreCanvas');
     const ctx = poutreCanvas.getContext('2d');
+    const shearCanvas = document.getElementById('shearCanvas');
+    const momentCanvas = document.getElementById('momentCanvas');
+    let shearChart, momentChart;
     const reactionA = document.getElementById('reactionA');
     const reactionB = document.getElementById('reactionB');
 
@@ -51,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
         reactionA.textContent = (ra / 1000).toFixed(2);
         reactionB.textContent = (rb / 1000).toFixed(2);
         dessinerPoutreEquilibre(chargeTotale, (ra / 1000), (rb / 1000));
+        dessinerDiagrammes(chargeTotale, (ra / 1000), (rb / 1000));
 
         // Onglet 3: Mécanique et Résistance
         const b_cm = parseFloat(poutreLargeurInput.value);
@@ -78,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // --- FONCTION POUR DESSINER LA POUTRE (ONGLET 2) ---
-    function dessinerPoutreEquilibre(charge, ra, rb) {
+function dessinerPoutreEquilibre(charge, ra, rb) {
         ctx.clearRect(0, 0, poutreCanvas.width, poutreCanvas.height);
         const yPoutre = 100, xStart = 50, xEnd = 450;
         ctx.fillStyle = '#555';
@@ -99,6 +103,35 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.beginPath(); ctx.moveTo(xEnd, yPoutre + 50); ctx.lineTo(xEnd, yPoutre + 10); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(xEnd, yPoutre + 10); ctx.lineTo(xEnd - 6, yPoutre + 16); ctx.lineTo(xEnd + 6, yPoutre + 16); ctx.stroke();
         ctx.fillText(`RB = ${rb.toFixed(2)} kN`, xEnd - 20, yPoutre + 70);
+    }
+
+    // --- FONCTION POUR DESSINER LES DIAGRAMMES DE V ET M ---
+    function dessinerDiagrammes(charge, ra, rb) {
+        const L = LONGUEUR_POUTRE;
+        const n = 50;
+        const labels = [];
+        const shear = [];
+        const moment = [];
+        for (let i = 0; i <= n; i++) {
+            const x = (L / n) * i;
+            labels.push(x.toFixed(2));
+            shear.push(ra - charge * x);
+            moment.push(ra * x - 0.5 * charge * x * x);
+        }
+
+        if (shearChart) shearChart.destroy();
+        shearChart = new Chart(shearCanvas, {
+            type: 'line',
+            data: { labels: labels, datasets: [{ label: 'V (kN)', data: shear, borderColor: '#2980b9', fill: false }] },
+            options: { responsive: false, scales: { x: { title: { display: true, text: 'x (m)' } }, y: { title: { display: true, text: 'V (kN)' } } } }
+        });
+
+        if (momentChart) momentChart.destroy();
+        momentChart = new Chart(momentCanvas, {
+            type: 'line',
+            data: { labels: labels, datasets: [{ label: 'M (kN.m)', data: moment, borderColor: '#c0392b', fill: false }] },
+            options: { responsive: false, scales: { x: { title: { display: true, text: 'x (m)' } }, y: { title: { display: true, text: 'M (kN.m)' } } } }
+        });
     }
 
     // --- NOUVELLE FONCTION POUR LE CALCULATEUR D'ISOSTATICITÉ ---
